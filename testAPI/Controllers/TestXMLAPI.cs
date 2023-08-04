@@ -1,8 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Dapper;
+using Microsoft.AspNetCore.Mvc;
+using SqlKata;
+using SqlKata.Compilers;
+using System.Data.SqlClient;
 using System.Globalization;
-using System.IO;
+using System.Numerics;
+using System.Reflection.Metadata;
 using System.Xml.Linq;
 using testAPI.Contracts;
+using testAPI.Models;
 
 namespace testAPI.Controllers
 {
@@ -26,6 +32,11 @@ namespace testAPI.Controllers
         [Route("Prices/{fileName}")]
         public string Prices(string fileName)
             => _service.Price(fileName).ToString();
-        
+
+        [HttpGet]
+        [Route("SqlToXml/{fileName}")]
+        public string SqlToXml(string fileName) =>
+            _service.SqlToXml(fileName).ToString();
+
     }
 }
