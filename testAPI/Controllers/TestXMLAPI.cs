@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Globalization;
-using System.IO;
-using System.Xml.Linq;
 using testAPI.Contracts;
 
 namespace testAPI.Controllers
@@ -26,6 +23,11 @@ namespace testAPI.Controllers
         [Route("Prices/{fileName}")]
         public string Prices(string fileName)
             => _service.Price(fileName).ToString();
-        
+
+        [HttpGet]
+        [Route("SqlToXml/{fileName}")]
+        public string SqlToXml(string fileName) =>
+            _service.SqlToXml(fileName).ToString();
+
     }
 }
