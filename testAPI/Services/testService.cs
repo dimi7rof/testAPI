@@ -8,86 +8,96 @@ using testAPI.Models;
 using System.Data.SqlClient;
 using Dapper;
 
-namespace testAPI.Services
+namespace testAPI.Services;
+
+public class testService : Itest
 {
-    public class testService : Itest
+    private readonly ILogger<testService> _logger;
+    private readonly string _connectionString = "Server=DESKTOP-8IRVI79;Database=Theatre;Integrated Security=true;";
+
+    public testService(ILogger<testService> logger)
     {
-        private readonly ILogger<TestXMLAPI> _logger;
-        private readonly string _connectionString = "Server=DESKTOP-8IRVI79;Database=Theatre;Integrated Security=true;";
+        _logger = logger;
+    }
 
-        public testService(ILogger<TestXMLAPI> logger)
+
+    public XDocument Get(string fileName)
+    {
+        _logger.Log(LogLevel.Information, $"search for {fileName} file");
+        if (fileName == null || fileName == string.Empty)
         {
-            _logger = logger;
+            _logger.Log(LogLevel.Information, $"{fileName} file not found");
+        }
+        return XDocument.Load($"E:\\xml\\{fileName}");
+    }
+
+
+    public XDocument Price(string fileName)
+    {
+        _logger.Log(LogLevel.Information, $"{DateTime.Now} - search for {fileName} file");
+        if (fileName == null || fileName == string.Empty)
+        {
+            _logger.LogInformation("{fileName} file not found", fileName);
         }
 
+        var document = XDocument.Load($"E:\\xml\\{fileName}");
+        _logger.LogInformation("{fileName} file found", fileName);
 
-        public XDocument Get(string fileName)
+        var element = new XElement("CD");
+        var resultDoc = new XDocument(element);
+        var prices = new List<double>();
+
+        foreach (var cd in document.Root.Elements())
         {
-            _logger.Log(LogLevel.Information, $"search for {fileName} file");
-            if (fileName == null || fileName == string.Empty)
-            {
-                _logger.Log(LogLevel.Information, $"{fileName} file not found");
-            }
-            return XDocument.Load($"E:\\xml\\{fileName}");
+            string price = cd.Element("PRICE").Value;
+            prices.Add(double.Parse(price, CultureInfo.InvariantCulture));
+            _logger.LogInformation("Price of {price} added", price);
         }
 
-
-        public XDocument Price(string fileName)
+        foreach (var price in prices.OrderBy(x => x))
         {
-            _logger.Log(LogLevel.Information, $"{DateTime.Now} - search for {fileName} file");
-            if (fileName == null || fileName == string.Empty)
-            {
-                _logger.Log(LogLevel.Information, $"{DateTime.Now} - {fileName} file not found");
-            }
+            element.Add(new XElement("PRICE", price));
+        }
+        return resultDoc;
+    }
 
-            XDocument document = XDocument.Load($"E:\\xml\\{fileName}");
-            _logger.Log(LogLevel.Information, $"{DateTime.Now} - {fileName} file found");
+    
 
-            XElement element = new XElement("CD");
-            XDocument resultDoc = new XDocument(element);
-            List<double> prices = new List<double>();
-
-            foreach (var cd in document.Root.Elements())
-            {
-                string price = cd.Element("PRICE").Value;
-                prices.Add(double.Parse(price, CultureInfo.InvariantCulture));
-                _logger.Log(LogLevel.Information, $"{DateTime.Now} - Price of {price} added");
-            }
-
-            foreach (var price in prices.OrderBy(x => x))
-            {
-                element.Add(new XElement("PRICE", price));
-            }
-            return resultDoc;
+    public XDocument SqlToXml(string tableName)
+    {
+        var plays = new List<Play>();
+        var compiler = new SqlServerCompiler();
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            connection.Open();
+            var query = new Query(tableName);
+            var result = compiler.Compile(query);
+            plays = connection.Query<Play>(result.Sql).ToList();
         }
 
-        public XDocument SqlToXml(string fileName)
+        var root = new XElement(tableName);
+        foreach (var play in plays)
         {
-            IEnumerable<Play> plays = new List<Play>();
-            var compiler = new SqlServerCompiler();
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                var query = new Query(fileName);
-                SqlResult result = compiler.Compile(query);
-                plays = connection.Query<Play>(result.Sql).ToList();
-            }
-
-            XElement root = new XElement(fileName);
-            XDocument resultDoc = new XDocument(root);
-
-            foreach (var play in plays)
-            {
-                XElement element = new XElement(("Play"),
-                    new XElement("Title", play.Title),
-                    new XElement("Duration", play.Duration.TotalSeconds),
-                    new XElement("Rating", play.Rating),
-                    new XElement("Description", play.Description),
-                    new XElement("Screenwriter", play.Screenwriter));
-                root.Add(element);
-                _logger.Log(LogLevel.Information, $"{DateTime.Now} - Play {play.Title} added to document");
-            }
-            return resultDoc;
+            var element = new XElement(("Play"),
+                new XElement("Title", play.Title),
+                new XElement("Duration", play.Duration.TotalSeconds),
+                new XElement("Description", play.Description),
+                new XElement("Screenwriter", play.Screenwriter));
+            root.Add(element);
+            _logger.LogInformation("Play {Title} added to document", play.Title);
         }
+        return new XDocument(root);
+    }
+
+
+    public XElement Dapper()
+    {
+        throw new NotImplementedException();
+
+    }
+
+    public XElement Sqlkata()
+    {
+        throw new NotImplementedException();
     }
 }

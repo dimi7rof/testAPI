@@ -9,5 +9,9 @@ namespace testAPI.Contracts
         public XDocument Price(string fileName);
 
         public XDocument SqlToXml(string fileName);
+
+        public XElement Sqlkata();
+
+        public XElement Dapper();
     }
 }

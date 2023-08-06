@@ -1,14 +1,5 @@
-﻿using Dapper;
-using Microsoft.AspNetCore.Mvc;
-using SqlKata;
-using SqlKata.Compilers;
-using System.Data.SqlClient;
-using System.Globalization;
-using System.Numerics;
-using System.Reflection.Metadata;
-using System.Xml.Linq;
+﻿using Microsoft.AspNetCore.Mvc;
 using testAPI.Contracts;
-using testAPI.Models;
 
 namespace testAPI.Controllers
 {
