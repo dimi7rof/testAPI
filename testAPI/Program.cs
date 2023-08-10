@@ -1,3 +1,4 @@
+using Cqrs.Repositories.Queries;
 using testAPI.Contracts;
 using testAPI.Services;
 
@@ -12,6 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<Itest, testService>();
+//builder.Services.AddScoped<IQueryFactory, QueryFactory>();
 
 var app = builder.Build();
 

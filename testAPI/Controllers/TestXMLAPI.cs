@@ -29,5 +29,15 @@ namespace testAPI.Controllers
         public string SqlToXml(string fileName) =>
             _service.SqlToXml(fileName).ToString();
 
+        [HttpGet]
+        [Route("Dapper")]
+        public string Dapper() =>
+            _service.Dapper().ToString();
+
+        [HttpGet]
+        [Route("Sqlkata")]
+        public string Sqlkata() =>
+           _service.Sqlkata().ToString();
+
     }
 }

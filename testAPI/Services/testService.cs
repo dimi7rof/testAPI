@@ -1,12 +1,13 @@
-﻿using SqlKata.Compilers;
+﻿using Dapper;
 using SqlKata;
+using SqlKata.Compilers;
+using SqlKata.Execution;
+using SqlKata.Extensions;
+using System.Data.SqlClient;
 using System.Globalization;
 using System.Xml.Linq;
 using testAPI.Contracts;
-using testAPI.Controllers;
 using testAPI.Models;
-using System.Data.SqlClient;
-using Dapper;
 
 namespace testAPI.Services;
 
@@ -61,7 +62,7 @@ public class testService : Itest
         return resultDoc;
     }
 
-    
+
 
     public XDocument SqlToXml(string tableName)
     {
@@ -92,12 +93,57 @@ public class testService : Itest
 
     public XElement Dapper()
     {
-        throw new NotImplementedException();
+        var tableName = "Plays";
+        var plays = new List<Play>();
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            connection.Open();
+            //string sql = $"SELECT * FROM {tableName} WHERE Screenwriter = 'Merna Menham'";
+            string sql = $"SELECT * FROM {tableName} WHERE Rating > 5";
+            plays = connection.Query<Play>(sql).ToList();
+        }
 
+        var root = new XElement(tableName);
+        foreach (var play in plays)
+        {
+            var element = new XElement(("Play"),
+                new XElement("Title", play.Title),
+                new XElement("Duration", play.Duration.TotalSeconds),
+                new XElement("Description", play.Description),
+                new XElement("Rating", play.Rating),
+                new XElement("Screenwriter", play.Screenwriter));
+            root.Add(element);
+            _logger.LogInformation("Play {Title} added to document", play.Title);
+        }
+        return root;
     }
 
     public XElement Sqlkata()
     {
-        throw new NotImplementedException();
+        var tableName = "Play";
+        //var plays = new List<Play>();
+        var compiler = new SqlServerCompiler();
+        var root = new XElement(tableName);
+
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            connection.Open();
+            //var query = new Query(tableName).Where("Rating", ">", 1);
+            var db = new QueryFactory(connection, compiler);
+            var plays = db.Query("Plays").Where("Rating", ">", 6).Get();
+
+            foreach (var play in plays)
+            {
+                var element = new XElement(("Play"),
+                    new XElement("Title", play.Title),
+                    new XElement("Duration", play.Duration.TotalSeconds),
+                    new XElement("Description", play.Description),
+                    new XElement("Screenwriter", play.Screenwriter));
+                root.Add(element);
+                //_logger.LogInformation("Play {Title} added to document", play.Title);
+            }
+        }
+
+        return root;
     }
 }
