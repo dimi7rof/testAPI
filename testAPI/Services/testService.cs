@@ -14,7 +14,7 @@ namespace testAPI.Services;
 public class testService : Itest
 {
     private readonly ILogger<testService> _logger;
-    private readonly string _connectionString = "Server=DESKTOP-8IRVI79;Database=Theatre;Integrated Security=true;";
+    private readonly string _connectionString = "";
 
     public testService(ILogger<testService> logger)
     {
