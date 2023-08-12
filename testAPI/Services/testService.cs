@@ -2,7 +2,6 @@
 using SqlKata;
 using SqlKata.Compilers;
 using SqlKata.Execution;
-using SqlKata.Extensions;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Xml.Linq;
@@ -14,7 +13,7 @@ namespace testAPI.Services;
 public class testService : Itest
 {
     private readonly ILogger<testService> _logger;
-    private readonly string _connectionString = "";
+    private readonly string _connectionString = _configuration.GetConnectionString("desktop");
 
     public testService(ILogger<testService> logger)
     {
@@ -121,13 +120,13 @@ public class testService : Itest
     public XElement Sqlkata()
     {
         var tableName = "Play";
-        //var plays = new List<Play>();
         var compiler = new SqlServerCompiler();
         var root = new XElement(tableName);
 
         using (var connection = new SqlConnection(_connectionString))
         {
             connection.Open();
+            _logger.LogInformation("Connection open!");
             //var query = new Query(tableName).Where("Rating", ">", 1);
             var db = new QueryFactory(connection, compiler);
             var plays = db.Query("Plays").Where("Rating", ">", 6).Get();
@@ -140,9 +139,9 @@ public class testService : Itest
                     new XElement("Description", play.Description),
                     new XElement("Screenwriter", play.Screenwriter));
                 root.Add(element);
-                //_logger.LogInformation("Play {Title} added to document", play.Title);
             }
         }
+        _logger.LogInformation("Element returned!");
 
         return root;
     }
