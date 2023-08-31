@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Microsoft.Extensions.Configuration;
 using SqlKata;
 using SqlKata.Compilers;
 using SqlKata.Execution;
@@ -15,7 +14,6 @@ namespace testAPI.Services;
 public class testService : Itest
 {
     private readonly ILogger<testService> _logger;
-    //private readonly SqlConnection _connection;
 
     public testService(ILogger<testService> logger)
     {

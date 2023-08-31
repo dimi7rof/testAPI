@@ -1,18 +1,14 @@
-﻿
-using System;
-using System.Data;
-using System.Data.Common;
-using System.Xml.Linq;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging.Abstractions;
-using Xunit;
-using testAPI.Services;  // Replace with the actual namespace of your code
+using System.Data;
+using System.Xml.Linq;
+using testAPI.Services;
 
-public class CarServiceTests2 : IDisposable
+public class CarServiceTests : IDisposable
 {
     private readonly IDbConnection _connection;
 
-    public CarServiceTests2()
+    public CarServiceTests()
     {
         _connection = new SqliteConnection("Data Source=:memory:");
         _connection.Open();
@@ -42,7 +38,7 @@ public class CarServiceTests2 : IDisposable
     }
 
     [Fact]
-    public void ViewCars_ReturnsCorrectXml2()
+    public void ViewCars_ReturnsCorrectXml()
     {
         // Arrange
         var carService = new testService(new NullLogger<testService>());
