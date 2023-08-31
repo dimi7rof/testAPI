@@ -2,7 +2,7 @@
 using SqlKata;
 using SqlKata.Compilers;
 using SqlKata.Execution;
-using SqlKata.Extensions;
+using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Xml.Linq;
@@ -14,20 +14,18 @@ namespace testAPI.Services;
 public class testService : Itest
 {
     private readonly ILogger<testService> _logger;
-    private readonly string _connectionString = "";
 
     public testService(ILogger<testService> logger)
     {
         _logger = logger;
     }
 
-
     public XDocument Get(string fileName)
     {
-        _logger.Log(LogLevel.Information, $"search for {fileName} file");
+        _logger.LogInformation("Search for {fileName} file", fileName);
         if (fileName == null || fileName == string.Empty)
         {
-            _logger.Log(LogLevel.Information, $"{fileName} file not found");
+            _logger.LogInformation("{fileName} file not found", fileName);
         }
         return XDocument.Load($"E:\\xml\\{fileName}");
     }
@@ -63,8 +61,7 @@ public class testService : Itest
     }
 
 
-
-    public XDocument SqlToXml(string tableName)
+    public XDocument SqlToXml(string tableName, string _connectionString)
     {
         var plays = new List<Play>();
         var compiler = new SqlServerCompiler();
@@ -91,7 +88,7 @@ public class testService : Itest
     }
 
 
-    public XElement Dapper()
+    public XElement Dapper(string _connectionString)
     {
         var tableName = "Plays";
         var plays = new List<Play>();
@@ -118,16 +115,17 @@ public class testService : Itest
         return root;
     }
 
-    public XElement Sqlkata()
+
+    public XElement Sqlkata(string _connectionString)
     {
         var tableName = "Play";
-        //var plays = new List<Play>();
         var compiler = new SqlServerCompiler();
         var root = new XElement(tableName);
 
         using (var connection = new SqlConnection(_connectionString))
         {
             connection.Open();
+            _logger.LogInformation("Connection open!");
             //var query = new Query(tableName).Where("Rating", ">", 1);
             var db = new QueryFactory(connection, compiler);
             var plays = db.Query("Plays").Where("Rating", ">", 6).Get();
@@ -140,8 +138,38 @@ public class testService : Itest
                     new XElement("Description", play.Description),
                     new XElement("Screenwriter", play.Screenwriter));
                 root.Add(element);
-                //_logger.LogInformation("Play {Title} added to document", play.Title);
             }
+        }
+        _logger.LogInformation("Element returned!");
+
+        return root;
+    }
+
+
+    public XElement ViewCars(IDbConnection connection)
+    {
+        var tableName = "Cars";
+        var compiler = new SqlServerCompiler();
+        var root = new XElement(tableName);
+
+        using (connection)
+        {
+            connection.Open();
+            _logger.LogInformation("Connection open!");
+            //var query = new Query(tableName).Where("Rating", ">", 1);
+            var db = new QueryFactory(connection, compiler);
+            var cars = db.Query(tableName).Get();
+
+            foreach (var car in cars)
+            {
+                var element = new XElement(("Car"),
+                    new XAttribute("Id", car.Id),
+                    new XElement("Brand", car.Brand),
+                    new XElement("Model", car.CarModel),
+                    new XElement("Mileage", car.Mileage));
+                root.Add(element);
+            }
+            //_logger.LogInformation("{cars} cars returned!", cars.Count);
         }
 
         return root;
