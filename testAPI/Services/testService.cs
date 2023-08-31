@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using SqlKata;
 using SqlKata.Compilers;
 using SqlKata.Execution;
+using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Xml.Linq;
@@ -14,6 +15,7 @@ namespace testAPI.Services;
 public class testService : Itest
 {
     private readonly ILogger<testService> _logger;
+    //private readonly SqlConnection _connection;
 
     public testService(ILogger<testService> logger)
     {
@@ -29,6 +31,7 @@ public class testService : Itest
         }
         return XDocument.Load($"E:\\xml\\{fileName}");
     }
+
 
     public XDocument Price(string fileName)
     {
@@ -58,6 +61,7 @@ public class testService : Itest
         }
         return resultDoc;
     }
+
 
     public XDocument SqlToXml(string tableName, string _connectionString)
     {
@@ -113,6 +117,7 @@ public class testService : Itest
         return root;
     }
 
+
     public XElement Sqlkata(string _connectionString)
     {
         var tableName = "Play";
@@ -142,13 +147,14 @@ public class testService : Itest
         return root;
     }
 
-    public XElement ViewCars(string _connectionString)
+
+    public XElement ViewCars(IDbConnection connection)
     {
         var tableName = "Cars";
         var compiler = new SqlServerCompiler();
         var root = new XElement(tableName);
 
-        using (var connection = new SqlConnection(_connectionString))
+        using (connection)
         {
             connection.Open();
             _logger.LogInformation("Connection open!");

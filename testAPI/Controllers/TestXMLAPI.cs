@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using System.Data;
 using testAPI.Contracts;
 
 namespace testAPI.Controllers
@@ -11,10 +13,13 @@ namespace testAPI.Controllers
 
         private readonly string _configuration;
 
+        private readonly IDbConnection _connection;
+
         public TestXMLAPI(Itest service, IConfiguration configuration)
         {
             _service = service;
             _configuration = configuration.GetValue<string>("ConnectionStrings:desktop");
+            _connection = new SqlConnection(_configuration);
         }
 
         [HttpGet]
@@ -45,7 +50,7 @@ namespace testAPI.Controllers
         [HttpGet]
         [Route("ViewCars")]
         public string ViewCars() =>
-            _service.ViewCars(_configuration).ToString();
+            _service.ViewCars(_connection).ToString();
 
     }
 }

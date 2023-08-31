@@ -1,4 +1,6 @@
-﻿using System.Xml.Linq;
+﻿using Microsoft.Data.SqlClient;
+using System.Data;
+using System.Xml.Linq;
 
 namespace testAPI.Contracts
 {
@@ -14,6 +16,6 @@ namespace testAPI.Contracts
 
         public XElement Dapper(string _configuration);
 
-        public XElement ViewCars(string _connectionString);
+        public XElement ViewCars(IDbConnection connection);
     }
 }
