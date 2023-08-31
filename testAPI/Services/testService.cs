@@ -126,7 +126,6 @@ public class testService : Itest
         {
             connection.Open();
             _logger.LogInformation("Connection open!");
-            //var query = new Query(tableName).Where("Rating", ">", 1);
             var db = new QueryFactory(connection, compiler);
             var plays = db.Query("Plays").Where("Rating", ">", 6).Get();
 

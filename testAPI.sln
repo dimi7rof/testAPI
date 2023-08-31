@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject1", "TestProject
 		{1FCABECA-6923-4DB9-9D09-8FC764942A35} = {1FCABECA-6923-4DB9-9D09-8FC764942A35}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalAPItest", "MinimalAPItest\MinimalAPItest.csproj", "{5E8EA220-D3AF-4407-BCA4-71529D2C0EE7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,10 @@ Global
 		{BF114FB6-3B6C-442A-9633-DF3FE10CCF27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF114FB6-3B6C-442A-9633-DF3FE10CCF27}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF114FB6-3B6C-442A-9633-DF3FE10CCF27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E8EA220-D3AF-4407-BCA4-71529D2C0EE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E8EA220-D3AF-4407-BCA4-71529D2C0EE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E8EA220-D3AF-4407-BCA4-71529D2C0EE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E8EA220-D3AF-4407-BCA4-71529D2C0EE7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
